@@ -117,7 +117,7 @@ with st.sidebar:
 
     st.subheader("💡 Časté oblasti")
 
-    if st.button("🏛 Legislative a preukaz ŤZP", use_container_width=True):
+    if st.button("🏛 Legislativy a preukaz ŤZP", use_container_width=True):
         st.session_state["pouzity_prompt"] = "Aké sú hlavné kroky pri žiadaní o preukaz ŤZP alebo kompenzačné príspevky pre dieťa s achondropláziou na Slovensku?"
         st.rerun()
 
@@ -245,7 +245,7 @@ Tvoja úloha:
 
             # Použitie platného a rýchleho modelu gemini-1.5-flash
             model = genai.GenerativeModel(
-                model_name="gemini-1.5-flash",
+                model_name="gemini-2.0-flash",
                 system_instruction=system_instruction,
                 generation_config=gen_config
             )
