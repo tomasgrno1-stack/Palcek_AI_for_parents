@@ -14,58 +14,75 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Prehľadný a profesionálny dizajn
+# 2. Elegatný tmavý dizajn pre dospelých a rodičov
 st.markdown("""
     <style>
+    /* Hlavné pozadie a text */
     .stApp {
-        background-color: #f8fafc;
-        color: #0f172a;
+        background-color: #0f172a !important;
+        color: #f8fafc !important;
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
+    /* Nadpisy */
     .main-header {
         font-size: 2.2rem;
         font-weight: 800;
-        color: #1e3a8a;
+        color: #60a5fa !important;
         margin-bottom: 0.2rem;
     }
 
     .sub-header {
-        color: #475569;
+        color: #94a3b8 !important;
         font-size: 1rem;
         margin-bottom: 1.5rem;
     }
 
     /* Bočný panel */
     [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e2e8f0;
+        background-color: #1e293b !important;
+        border-right: 1px solid #334155;
     }
 
-    /* Správy */
+    [data-testid="stSidebar"] * {
+        color: #f8fafc !important;
+    }
+
+    /* Bubliny správ */
     [data-testid="stChatMessage"] {
-        background-color: #ffffff !important;
-        border: 1px solid #e2e8f0;
+        background-color: #1e293b !important;
+        border: 1px solid #334155 !important;
         border-radius: 12px;
         padding: 1.2rem;
         margin-bottom: 0.8rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        color: #f8fafc !important;
     }
 
-    /* Tlačidlá */
+    /* Tlačidlá v bočnom paneli a na ploche */
     .stButton > button {
         border-radius: 8px !important;
-        background-color: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
-        color: #1e293b !important;
+        background-color: #334155 !important;
+        border: 1px solid #475569 !important;
+        color: #f8fafc !important;
         font-weight: 500 !important;
         transition: all 0.2s ease;
     }
 
     .stButton > button:hover {
-        border-color: #2563eb !important;
-        color: #2563eb !important;
-        background-color: #f0f9ff !important;
+        border-color: #60a5fa !important;
+        color: #60a5fa !important;
+        background-color: #1e293b !important;
+    }
+
+    /* Textové vstupy */
+    [data-testid="stChatInput"] {
+        background-color: #1e293b !important;
+        border: 1px solid #475569 !important;
+        border-radius: 12px;
+    }
+
+    [data-testid="stChatInput"] textarea {
+        color: #f8fafc !important;
     }
     </style>
 """, unsafe_allow_html=True)
