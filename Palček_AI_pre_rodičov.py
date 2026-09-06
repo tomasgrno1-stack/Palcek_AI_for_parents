@@ -8,7 +8,7 @@ import pandas as pd
 
 # 1. Konfigurácia aplikácie
 st.set_page_config(
-    page_title="Palček AI - Dospelí a Rodičia",
+    page_title="Palček AI - AI pre Rodičov",
     page_icon="📘",
     layout="wide",
     initial_sidebar_state="expanded"
