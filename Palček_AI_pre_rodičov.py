@@ -243,8 +243,9 @@ Tvoja úloha:
                 r = "user" if m["role"] == "user" else "model"
                 history_data.append({"role": r, "parts": [m["content"]]})
 
+            # Použitie platného a rýchleho modelu gemini-1.5-flash
             model = genai.GenerativeModel(
-                model_name="gemini-3.6-flash",
+                model_name="gemini-1.5-flash",
                 system_instruction=system_instruction,
                 generation_config=gen_config
             )
@@ -265,11 +266,11 @@ Tvoja úloha:
                     break
 
                 except Exception as err:
-                    if "429" in str(err) and attempt < max_retries - 1:
-                        time.sleep(2)
+                    if ("429" in str(err) or "quota" in str(err).lower()) and attempt < max_retries - 1:
+                        time.sleep(5)  # Dlhšia pauza na obnovenie limitu požiadaviek
                         continue
                     else:
                         response_placeholder.error(
-                            "Služba je dočasne vyťažená. Počkajte pár sekúnd a pošlite správu znova."
+                            f"Chyba pri komunikácii: {err}"
                         )
                         break
