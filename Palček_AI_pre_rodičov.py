@@ -110,8 +110,8 @@ def novy_chat():
 
 # 5. Bočný panel s tématickými okruhmi
 with st.sidebar:
-    st.markdown('<p class="main-header" style="font-size:1.6rem;">📘 Palčekovia AI</p>', unsafe_allow_html=True)
-    st.caption("Informačný asistent pre dospelých a rodičov")
+    st.markdown('<p class="main-header" style="font-size:1.6rem;">📘 Palček AI</p>', unsafe_allow_html=True)
+    st.caption("Informačný asistent pre a rodičov")
     st.write("")
 
     if st.button("➕ Nová konverzácia", use_container_width=True):
