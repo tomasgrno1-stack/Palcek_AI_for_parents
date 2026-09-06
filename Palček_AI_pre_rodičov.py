@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Elegatný tmavý dizajn pre dospelých a rodičov
+# 2. Elegatný tmavý dizajn pre rodičov
 st.markdown("""
     <style>
     /* Hlavné pozadie a text */
