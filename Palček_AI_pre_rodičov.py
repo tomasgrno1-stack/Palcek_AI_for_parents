@@ -18,14 +18,12 @@ st.set_page_config(
 # 2. Tmavý dizajn pre dospelých a rodičov
 st.markdown("""
     <style>
-    /* Hlavné pozadie a text */
     .stApp {
         background-color: #0f172a !important;
         color: #f8fafc !important;
         font-family: 'Inter', system-ui, -apple-system, sans-serif;
     }
 
-    /* Nadpisy */
     .main-header {
         font-size: 2.2rem;
         font-weight: 800;
@@ -39,7 +37,6 @@ st.markdown("""
         margin-bottom: 1.5rem;
     }
 
-    /* Bočný panel */
     [data-testid="stSidebar"] {
         background-color: #1e293b !important;
         border-right: 1px solid #334155;
@@ -49,7 +46,6 @@ st.markdown("""
         color: #f8fafc !important;
     }
 
-    /* Bubliny správ */
     [data-testid="stChatMessage"] {
         background-color: #1e293b !important;
         border: 1px solid #334155 !important;
@@ -59,7 +55,6 @@ st.markdown("""
         color: #f8fafc !important;
     }
 
-    /* Tlačidlá v bočnom paneli a na ploche */
     .stButton > button {
         border-radius: 8px !important;
         background-color: #334155 !important;
@@ -75,7 +70,6 @@ st.markdown("""
         background-color: #1e293b !important;
     }
 
-    /* Textové vstupy */
     [data-testid="stChatInput"] {
         background-color: #1e293b !important;
         border: 1px solid #475569 !important;
@@ -177,7 +171,7 @@ for msg in curr_chat["messages"]:
             st.image(msg["image"], use_container_width=True)
         st.markdown(msg["content"])
 
-# 7. Vstup pre používateľa a nahrávanie dokumentov
+# 7. Vstup pre používateľa
 col_file, col_input = st.columns([0.08, 0.92])
 
 uploaded_file = None
@@ -190,7 +184,7 @@ with col_input:
 
 user_prompt = user_input or st.session_state.pop("pouzity_prompt", None)
 
-# 8. Spracovanie a generovanie odpovede
+# 8. Generovanie odpovede
 if user_prompt:
     if len(curr_chat["messages"]) == 0:
         curr_chat["title"] = user_prompt[:25] + "..." if len(user_prompt) > 25 else user_prompt
@@ -230,26 +224,22 @@ if user_prompt:
     with st.chat_message("assistant", avatar="🤖"):
         response_placeholder = st.empty()
         
-        with st.spinner("Spracovávam odpoveď..."):
-            system_instruction = """Si odborný, empatiou sprevádzaný a vecný AI asistent pre rodičov a dospelých členov v organizácii Palčekovia (združujúca ľudí s achondropláziou a inými formami dwarfizmu).
+        with st.spinner("Pripravujem odpoveď..."):
+            system_instruction = """Si odborný, empatiou sprevádzaný a vecný AI asistent pre rodičov v organizácii Palčekovia.
 
 Tvoja úloha:
-1. Poskytovať presné, jasné a praktické informácie ohľadom:
-   - Legislatívy, žiadostí o ŤZP, kompenzačné príspevky a príspevky na opatrovanie na Slovensku (ÚPSVaR).
-   - Inklúzie v školách a škôlkach, prípravy pedagógov a prispôsobenia prostredia.
-   - Odporúčaní pre zdravotnú starostlivosť (neurológia, ortopédia, ORL a pod.) – VŽDY s upozornením, že nenahrádzaš lekársku diagnózu.
-   - Analýzy alebo zhrnutia priložených dokumentov, lekárskych správ či žiadostí.
-
-2. Tón reči: Profesionálny, súcitný, povzbudivý, vecný a prehľadný (používaj odrážky a tučné písmo pre dôležité termíny)."""
+1. Poskytovať presné a praktické informácie ohľadom legislatívy (ŤZP, príspevky ÚPSVaR), školstva, inklúzie a zdravotnej starostlivosti pri achondroplázii.
+2. Odpovedaj stručne, večne a k veci. Používaj prehľadné odrážky, aby sa odpoveď vygenerovala čo najrýchlejšie.
+3. Vždy pri zdravotných témach uvádzaj, že nenahrádzaš lekársku diagnózu."""
 
             gen_config = genai.types.GenerationConfig(
                 temperature=0.3,
-                top_p=0.95,
-                max_output_tokens=8192
+                top_p=0.9,
+                max_output_tokens=1500
             )
 
             history_data = []
-            for m in curr_chat["messages"][:-1][-10:]:
+            for m in curr_chat["messages"][:-1][-4:]:
                 r = "user" if m["role"] == "user" else "model"
                 history_data.append({"role": r, "parts": [m["content"]]})
 
@@ -276,10 +266,10 @@ Tvoja úloha:
 
                 except Exception as err:
                     if "429" in str(err) and attempt < max_retries - 1:
-                        time.sleep(4)
+                        time.sleep(2)
                         continue
                     else:
                         response_placeholder.error(
-                            "Služba je momentálne vyťažená alebo bol dosiahnutý dočasný limit požiadaviek. Skúste to prosím o pár sekúnd znova."
+                            "Služba je dočasne vyťažená. Počkajte pár sekúnd a pošlite správu znova."
                         )
                         break
