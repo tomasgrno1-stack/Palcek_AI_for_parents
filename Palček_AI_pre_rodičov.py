@@ -163,7 +163,7 @@ with st.sidebar:
 # 6. Hlavné rozhranie
 curr_chat = st.session_state.adult_chats[st.session_state.current_adult_id]
 
-st.markdown('<p class="main-header">📘 Palčekovia AI – Poradca a Asistent</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">📘 Palček AI – Poradca a Asistent</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Odborná podpora, spracovanie dokumentov a informácie pre rodičov a dospelých členov komunity.</p>', unsafe_allow_html=True)
 
 # Zobrazenie histórie
