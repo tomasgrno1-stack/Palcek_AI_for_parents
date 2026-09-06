@@ -5,16 +5,17 @@ import uuid
 import pypdf
 import docx
 import pandas as pd
+import time
 
 # 1. Konfigurácia aplikácie
 st.set_page_config(
-    page_title="Palček AI - AI pre Rodičov",
+    page_title="Palček AI - Poradca a Asistent",
     page_icon="📘",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 2. Elegatný tmavý dizajn pre rodičov
+# 2. Tmavý dizajn pre dospelých a rodičov
 st.markdown("""
     <style>
     /* Hlavné pozadie a text */
@@ -108,7 +109,7 @@ def novy_chat():
     st.session_state.adult_chats[nid] = {"title": "💬 Nová konverzácia", "messages": []}
     st.session_state.current_adult_id = nid
 
-# 5. Bočný panel s tématickými okruhmi
+# 5. Bočný panel
 with st.sidebar:
     st.markdown('<p class="main-header" style="font-size:1.6rem;">📘 Palček AI</p>', unsafe_allow_html=True)
     st.caption("Informačný asistent pre rodičov")
@@ -122,8 +123,8 @@ with st.sidebar:
 
     st.subheader("💡 Časté oblasti")
 
-    if st.button("🏛 Legislativy a preukaz ŤZP", use_container_width=True):
-        st.session_state["pouzity_prompt"] = "Aké sú hlavné kroky pri žiadaní o preukaz ŤZP alebo kompenzačné príspevky pre dieťa/dospelého s achondropláziou na Slovensku?"
+    if st.button("🏛 Legislative a preukaz ŤZP", use_container_width=True):
+        st.session_state["pouzity_prompt"] = "Aké sú hlavné kroky pri žiadaní o preukaz ŤZP alebo kompenzačné príspevky pre dieťa s achondropláziou na Slovensku?"
         st.rerun()
 
     if st.button("🩺 Zdravotná starostlivosť a liečba", use_container_width=True):
@@ -230,9 +231,7 @@ if user_prompt:
         response_placeholder = st.empty()
         
         with st.spinner("Spracovávam odpoveď..."):
-            try:
-                # Odborný systémový prompt pre dospelých a rodičov
-                system_instruction = """Si odborný, empatiou sprevádzaný a vecný AI asistent pre dospelých členov a rodičov v organizácii Palčekovia (združujúca ľudí s achondropláziou a inými formami dwarfizmu).
+            system_instruction = """Si odborný, empatiou sprevádzaný a vecný AI asistent pre rodičov a dospelých členov v organizácii Palčekovia (združujúca ľudí s achondropláziou a inými formami dwarfizmu).
 
 Tvoja úloha:
 1. Poskytovať presné, jasné a praktické informácie ohľadom:
@@ -243,33 +242,44 @@ Tvoja úloha:
 
 2. Tón reči: Profesionálny, súcitný, povzbudivý, vecný a prehľadný (používaj odrážky a tučné písmo pre dôležité termíny)."""
 
-                gen_config = genai.types.GenerationConfig(
-                    temperature=0.3,  # Nižšia teplota pre presnejšie a odbornejšie odpovede
-                    top_p=0.95,
-                    max_output_tokens=8192
-                )
+            gen_config = genai.types.GenerationConfig(
+                temperature=0.3,
+                top_p=0.95,
+                max_output_tokens=8192
+            )
 
-                history_data = []
-                for m in curr_chat["messages"][:-1][-10:]:
-                    r = "user" if m["role"] == "user" else "model"
-                    history_data.append({"role": r, "parts": [m["content"]]})
+            history_data = []
+            for m in curr_chat["messages"][:-1][-10:]:
+                r = "user" if m["role"] == "user" else "model"
+                history_data.append({"role": r, "parts": [m["content"]]})
 
-                model = genai.GenerativeModel(
-                    model_name="gemini-2.0-flash",
-                    system_instruction=system_instruction,
-                    generation_config=gen_config
-                )
+            model = genai.GenerativeModel(
+                model_name="gemini-3.6-flash",
+                system_instruction=system_instruction,
+                generation_config=gen_config
+            )
 
-                chat_session = model.start_chat(history=history_data)
-                response = chat_session.send_message(prompt_parts, stream=True)
+            max_retries = 3
+            for attempt in range(max_retries):
+                try:
+                    chat_session = model.start_chat(history=history_data)
+                    response = chat_session.send_message(prompt_parts, stream=True)
 
-                full_response = ""
-                for chunk in response:
-                    full_response += chunk.text
-                    response_placeholder.markdown(full_response + "▌")
+                    full_response = ""
+                    for chunk in response:
+                        full_response += chunk.text
+                        response_placeholder.markdown(full_response + "▌")
 
-                response_placeholder.markdown(full_response)
-                curr_chat["messages"].append({"role": "assistant", "content": full_response})
+                    response_placeholder.markdown(full_response)
+                    curr_chat["messages"].append({"role": "assistant", "content": full_response})
+                    break
 
-            except Exception as err:
-                response_placeholder.error(f"Chyba pri komunikácii: {err}")
+                except Exception as err:
+                    if "429" in str(err) and attempt < max_retries - 1:
+                        time.sleep(4)
+                        continue
+                    else:
+                        response_placeholder.error(
+                            "Služba je momentálne vyťažená alebo bol dosiahnutý dočasný limit požiadaviek. Skúste to prosím o pár sekúnd znova."
+                        )
+                        break
