@@ -122,7 +122,7 @@ with st.sidebar:
 
     st.subheader("💡 Časté oblasti")
 
-    if st.button("🏛 Legislative a preukaz ŤZP", use_container_width=True):
+    if st.button("🏛 Legislativy a preukaz ŤZP", use_container_width=True):
         st.session_state["pouzity_prompt"] = "Aké sú hlavné kroky pri žiadaní o preukaz ŤZP alebo kompenzačné príspevky pre dieťa/dospelého s achondropláziou na Slovensku?"
         st.rerun()
 
